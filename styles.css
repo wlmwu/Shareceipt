@@ -1,0 +1,241 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #555;
+}
+
+label, input, button {
+    display: block;
+    margin: 10px auto !important;
+}
+
+input, button {
+    padding: 10px;
+    font-size: 16px;
+    margin: auto !important;
+}
+
+input[type="number"], input[type="text"] {
+    width: 110px;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 10px 20px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#add-friend, #add-item {
+    border-radius: 10px !important;
+    margin: 0.5em auto !important;
+}
+
+#friends-list, #items-list {
+    text-align: center;
+    display: inline-block;
+}
+
+.friend {
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+}
+
+.item {
+    position: relative;
+    display: inline-block;
+    margin: 10px 0;
+    padding: 10px 0px;
+    border: 1px solid #ddd;
+    border-radius: 10px; /* 圓角邊框 */
+    background-color: #f5eed5; /* 更淺的背景顏色 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    min-width: 260px;
+}
+
+.friend .delete-btn, .item .delete-btn, .item .collapse-btn {
+    position: absolute;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    margin: 0;
+}
+.friend .delete-btn {
+    background: red;
+    color: white;
+    top: -5px;
+    right: -5px;
+    padding: 0.6em 0.6em;
+}
+.item .delete-btn {
+    background: #d8d8d8; /* 減號按鈕顏色 */
+    color: #858585;
+    padding: 1em 1em;
+    top: -0.5em;
+    right: -0.5em;
+    font-size: 20px;
+}
+.item .collapse-btn {
+    background: #d8d8d8; /* 減號按鈕顏色 */
+    color: #858585;
+    padding: 1em 1em;
+    top: -0.5em;
+    left: -0.7em;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.friend-name, .item-friend-name {
+    background-color: #e0e0e0;
+    border-radius: 50px;
+    padding: 10px 20px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.item-friends {
+    text-align: left;
+    display: inline-block;
+    margin: 10px 0;
+}
+
+.item-friend {
+    display: flex;
+    align-items: center;
+    /* margin-bottom: 5px; */
+    margin-right: 1em;
+}
+
+.item-friend-name {
+    border-radius: 10px;
+    min-width: 13.2em;
+    min-height: 3.9em;
+    padding-left: 24px;
+}
+
+.distribute-btn {
+    display: block;
+    background-color: rgb(120, 120, 120);
+    border-radius: 100px;
+    margin-left: 1em;
+    margin-top: 1.5em !important;
+}
+
+.unit-btn {
+    display: inline-block;
+    background-color: darkblue;
+    border-radius: 100%;
+    padding: 0;
+    margin-left: 10px;
+    min-width: 42px;
+    min-height: 42px;
+}
+
+.percentage-input {
+    display: inline;
+}
+
+.item-friend input[type="checkbox"] {
+    margin-right: 3px !important;
+}
+
+.item-friend input[type="number"] {
+    width: 80px;
+    margin: 10px;
+}
+
+.item-friend input[type="number"].locked {
+    background-color: #e0e0e0;
+    cursor: not-allowed;
+}
+
+.results-output p {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+
+#results {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 400px;
+    display: inline-block;
+    margin: 1em;
+    padding: 2.5em 2em;
+    /* padding-top: 0em; */
+}
+
+/* 标题样式 */
+#results h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+/* 警告信息样式 */
+#results-alert {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* 输出结果容器样式 */
+#results-output {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+/* 结果项样式 */
+.result-output-friend {
+    /* padding: 10px;
+    border-radius: 4px;
+    color: #000;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px; */
+    min-width: 10em;
+}
+
+.result-output-friend p {
+    margin: 0;
+}
+
+/* 添加一些 hover 效果 */
+.result-output-friend:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+h3 {
+    margin-top: 1em !important;
+}
