@@ -217,11 +217,12 @@ class FriendManager {
                             ▬
                         </button>
                         <button class="delete-btn">✖</button>
+                        <div class="item-head"></div>
                         <div class="item-container collapse show" id="item-container-${item.id}">
                             <label for="item-name-${item.id}">項目 ${index} 名稱:</label>
-                            <input type="text" id="item-name-${item.id}" value="${item.name}">
+                            <input type="text" class="item-name" id="item-name-${item.id}" value="${item.name}">
                             <label for="item-amount-${item.id}">金額:</label>
-                            <input type="number" id="item-amount-${item.id}" min="0" step="0.01" value="${item.amount}">
+                            <input type="number" class="item-amount" id="item-amount-${item.id}" min="0" step="0.01" value="${item.amount}" placeholder="(required)">
                             <button class="distribute-btn">Distribute Evenly</button>
                             <label for="item-friends-${item.id}"></label>
                             <div id="item-friends-${item.id}" class="item-friends"></div>
@@ -254,13 +255,22 @@ class FriendManager {
         });
 
         $('#items-list .item .item-container').off('hide.bs.collapse').on('hide.bs.collapse', (e) => {
-            const collapseBtn = $(e.target).closest('.item').find('.collapse-btn');
+            const itemdiv = $(e.target).closest('.item');
+            const collapseBtn = itemdiv.find('.collapse-btn');
             $(collapseBtn).html(`✚`);
+
+            let head = itemdiv.find('.item-head');
+            let name = itemdiv.find('.item-name')[0].value;
+            let amount = itemdiv.find('.item-amount')[0].value;
+            head.html(`${name ? name : ""}&emsp;&emsp; ${amount ? "$ "+amount : ""}`)
         });
         
         $('#items-list .item .item-container').off('show.bs.collapse').on('show.bs.collapse', (e) => {
-            const collapseBtn = $(e.target).closest('.item').find('.collapse-btn');
+            const itemdiv = $(e.target).closest('.item');
+            const collapseBtn = itemdiv.find('.collapse-btn');
             $(collapseBtn).html( `▬` );
+            let head = itemdiv.find('.item-head');
+            head.html(``);
         });
 
         $('#items-list .item .distribute-btn').off('click').on('click', (e) => {
