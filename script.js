@@ -175,7 +175,7 @@ class FriendManager {
                     <div class="text-center align-middle">
                         <div class="d-block d-sm-inline">${friend.name}</div>
                         <div class="d-inline">
-                            <input type="number" value="${percentage}" min="0" max="100" step="0.01" class="percentage-input"> %
+                            <input type="number" value="${percentage}" min="0" max="100" step="0.01" class="percentage-input" ${item.getParticipantChecked(friendId) === false ? "disabled" : ""}> %
                         </div>
                     </div>
                 `);
