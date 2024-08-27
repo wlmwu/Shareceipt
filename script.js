@@ -223,7 +223,7 @@ class FriendManager {
                             <input type="text" class="item-name" id="item-name-${item.id}" value="${item.name}">
                             <label for="item-amount-${item.id}">金額:</label>
                             <input type="number" class="item-amount" id="item-amount-${item.id}" min="0" step="0.01" value="${item.amount}" placeholder="(required)">
-                            <button class="distribute-btn">Distribute Evenly</button>
+                            <button class="distribute-btn" ontouchstart="">Distribute Evenly</button>
                             <label for="item-friends-${item.id}"></label>
                             <div id="item-friends-${item.id}" class="item-friends"></div>
                         </div>
