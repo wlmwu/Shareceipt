@@ -33,14 +33,14 @@
     <div id="bill-section">        
         <!-- <h3>項目清單</h3> -->
         <div class="line"></div>
-        <div class="mb-3">
-            <label for="total-amount" style="font-weight: bolder;">Total Amount</label>
-            <input type="number" id="total-amount" min="0" step="0.01" placeholder="(optional)">
-        </div>
 
         <div id="items-list" style="display: none;"></div>
         
         <button class="button-28" id="add-item" ontouchstart="">+ Item</button>
+        <div class="mb-3">
+            <label for="total-amount" style="font-weight: bolder;">Total Amount</label>
+            <input type="number" id="total-amount" min="0" step="0.01" placeholder="(optional)">
+        </div>
     </div>
     
     <div class="line"></div>
@@ -49,6 +49,7 @@
         <h5>Each Person's Share</h5>
         <span id="results-alert" style="color: red;"></span>
         <div id="results-output"></div>
+        <button class="mt-4" id="share-result-btn" ontouchstart="" style="background-color: transparent; color: black;"><i class="fa-solid fa-share-nodes"></i></button>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

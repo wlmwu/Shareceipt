@@ -339,16 +339,26 @@ class FriendManager {
         );
 
         $('#results-alert').html('');
+        let index = 0;
         this.items.forEach((item, iid) => {
+            ++index;
+            if (!item.amount) return;
             const totalPercentage = item.getTotalPercentage();
-            if (item.amount && totalPercentage != 100) {
-                $('#results-alert').html('Warning: some items do not sum to 100%');
+            if (totalPercentage > 100) {
+                $('#results-alert').append(`[Error] Item #${index} exceed a total of 100%.<br>`);
                 return;
             }
-            if (!item.amount) return;
+            const remainPercentage = 100 - item.getTotalPercentage();
+            const countNaN = Array.from(item.participants.values())
+                            .map(p => p.percentage)
+                            .reduce((accumulator, currentValue) => accumulator + (isNaN(currentValue) ? 1 : 0), 0);
+            if (remainPercentage && !countNaN) {
+                $('#results-alert').append(`[Error] Item #${index} do not sum to 100%.<br>`);
+                return;
+            }
             item.participants.forEach((_, fid) => {
                 if (item.getParticipantChecked(fid)) {
-                    const percentage = item.getParticipantPercentage(fid) || 0;
+                    const percentage = item.getParticipantPercentage(fid) || remainPercentage/countNaN;
                     const amount = item.amount * percentage / 100 + results.get(fid);
                     results.set(fid, amount);
                 }
@@ -358,6 +368,7 @@ class FriendManager {
 
         // console.log(totalAmount, results);
         this.showResult(totalAmount, results);
+        return [totalAmount, results];
     }
 
     showResult(totalAmount, results) {
@@ -373,6 +384,21 @@ class FriendManager {
                 </div>
                 `);
         });
+    }
+
+    getShareResults () {
+        const [totalAmount, results] = this.calculate();
+        const resultTotal = Array.from(results.values()).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+        let resStr = "";
+        this.friends.forEach((friend, fid) => {
+            const totalAmountOwed = totalAmount * results.get(fid) / resultTotal;
+            console.log(friend.name, totalAmountOwed);
+            resStr = resStr.concat(`${friend.name}:\t$${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)}\n`);
+            console.log(resStr)
+        });
+
+        return resStr;
     }
 
     autoDistribute(itemId) {
@@ -404,6 +430,20 @@ class FriendManager {
             this.addItem();
             $('#items-list').show();
         });
+
+        $('#share-result-btn').on('click', async () => {
+            try {
+                const res = this.getShareResults();
+                const shareData = {
+                    title: 'Share the results!',
+                    text: `↓ Each Person's Share ↓\n\n${res}`,
+                    url: document.location.href
+                };
+                await navigator.share(shareData)
+            } catch(err) {
+                console.log( 'Error: ' + err );
+            }
+        });
     }
 
     editName(id) {
@@ -415,7 +455,7 @@ class FriendManager {
                 this.updateFriendList();
             }
         }
-        console.log(friend);
+        // console.log(friend);
     }
 }
 
