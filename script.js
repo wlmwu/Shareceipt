@@ -237,7 +237,7 @@ class FriendManager {
                     </div>
                 `);
             } else {
-                $($(itemElement).find('label')[0]).html(`Item ${index} Name`);
+                $($(itemElement).find('label')[0]).html(`Item #${index} Name`);
             }
             index++;
         });
@@ -330,9 +330,15 @@ class FriendManager {
         }.bind(this));
 
         $('#total-amount').off('input').on('input', () => this.calculate());
+        $('#subtotal-amount').off('input').on('input', () => this.calculate());
     }
 
     calculate() {
+        $('#results-alert').html('');
+        if (this.items.size == 0 && ($('#subtotal-amount').val() > 0 || $('#total-amount-additional').val() > 0)) {
+            $('#results-alert').append(`[Error] Adding items to calculate.`);
+        }
+
         let totalAmount = parseFloat($('#total-amount').val());
         let amountOfItems = Array.from(this.items.values()).map(item => item.amount);
         totalAmount = totalAmount ? totalAmount : 
@@ -354,6 +360,10 @@ class FriendManager {
             const countNaN = Array.from(item.participants.values())
                             .map(p => p.percentage)
                             .reduce((accumulator, currentValue) => accumulator + (isNaN(currentValue) ? 1 : 0), 0);
+            if (countNaN < item.participants.size && !item.amount) {
+                $('#results-alert').append(`[Error] "Amount" of item #${index} is empty.<br>`);
+                return;
+            }
             if (remainPercentage && !countNaN) {
                 $('#results-alert').append(`[Error] Item #${index} do not sum to 100%.<br>`);
                 return;
@@ -383,36 +393,15 @@ class FriendManager {
 
         }
 
-        $('#results-alert').html('');
         let index = 0;
         this.items.forEach((item, iid) => {
             ++index;
-            if (!item.amount) return;
+            // if (!item.amount) return;
             if (item.getUnitType() == ItemType.kTypePercent) {
                 calculatePercentage(index, item, iid, results);
             } else {
                 calculateShare(index, item, iid, results);
             }
-        //     const totalPercentage = item.getTotalPercentage();
-        //     if (totalPercentage > 100) {
-        //         $('#results-alert').append(`[Error] Item #${index} exceed a total of 100%.<br>`);
-        //         return;
-        //     }
-        //     const remainPercentage = 100 - item.getTotalPercentage();
-        //     const countNaN = Array.from(item.participants.values())
-        //                     .map(p => p.percentage)
-        //                     .reduce((accumulator, currentValue) => accumulator + (isNaN(currentValue) ? 1 : 0), 0);
-        //     if (remainPercentage && !countNaN) {
-        //         $('#results-alert').append(`[Error] Item #${index} do not sum to 100%.<br>`);
-        //         return;
-        //     }
-        //     item.participants.forEach((_, fid) => {
-        //         if (item.getParticipantChecked(fid)) {
-        //             const percentage = item.getParticipantPercentage(fid) || remainPercentage/countNaN;
-        //             const amount = item.amount * percentage / 100 + results.get(fid);
-        //             results.set(fid, amount);
-        //         }
-        //     });
             
         });
 
@@ -422,6 +411,12 @@ class FriendManager {
     }
 
     showResult(totalAmount, results) {
+        $('#subtotal-amount').attr("placeholder", totalAmount);
+        const originalAmount = parseFloat($('#subtotal-amount').val() ? $('#subtotal-amount').val() : $('#subtotal-amount').attr('placeholder'));
+        const additionalAmount = parseFloat($('#total-amount-additional').val() || 0) / 100;
+        totalAmount = (originalAmount * (1 + additionalAmount));
+        $('#total-amount').html(totalAmount.toFixed(2));
+
         const resultTotal = Array.from(results.values()).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
         const resultsOutput = $('#results-output');
@@ -494,6 +489,18 @@ class FriendManager {
                 console.log( 'Error: ' + err );
             }
         });
+
+        $('#total-amount-additional').off('focus').on('focus', (e) => {
+            $(e.target).val('');
+            this.calculate();
+        });
+        $('#subtotal-amount').off('focus').on('focus', (e) => {
+            $(e.target).val('');
+            this.calculate();
+        });
+
+        $('#total-amount-additional').off('input').on('input', () => this.calculate());
+        $('#subtotal-amount').off('input').on('input', () => this.calculate());
     }
 
     editName(id) {

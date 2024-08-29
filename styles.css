@@ -249,6 +249,20 @@ button {
     font-size: 1.2em;
 }
 
+#total-amount, #subtotal-amount, #total-amount-additional {
+    display: inline;
+}
+
+#subtotal-amount {
+    height: 40px;
+}
+
+#total-amount-additional {
+    width: 60px;
+    height: 36px;
+    font-size: small;
+}
+
 .line {
     margin:5px 0;
     height:2px;
