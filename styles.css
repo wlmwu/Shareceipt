@@ -6,9 +6,15 @@ body {
     text-align: center;
 }
 
-h1 {
+.body-title {
     color: #333;
-    margin-bottom: 20px;
+    font-family: sans-serif, 'Trebuchet MS';
+    font-weight: 200;
+}
+.body-second-title {
+    color: #333;
+    font-family: 'Trebuchet MS',  sans-serif;
+    font-weight: 600;
 }
 
 h2 {
@@ -26,6 +32,11 @@ input, button {
     margin: auto !important;
 }
 
+input {
+    border: 1.5px black solid;
+    border-radius: 5px;
+}
+
 input[type="number"], input[type="text"] {
     width: 110px;
 }
@@ -40,10 +51,6 @@ button {
     padding: 10px 20px;
 }
 
-button:active {
-    background-color: #0056b3;
-}
-
 #add-friend, #add-item {
     border-radius: 10px !important;
     margin: 0.5em auto !important;
@@ -51,7 +58,7 @@ button:active {
 
 #friends-list, #items-list {
     text-align: center;
-    display: inline-block;
+    /* display: inline-block; */
 }
 
 .friend {
@@ -63,13 +70,14 @@ button:active {
 .item {
     position: relative;
     display: inline-block;
-    margin: 10px 0;
+    margin: -1px 0;
     padding: 10px 0px;
-    border: 1px solid #ddd;
-    border-radius: 10px; /* 圓角邊框 */
-    background-color: #f5eed5; /* 更淺的背景顏色 */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    min-width: 260px;
+    border: 2px solid #000;
+    border-radius: 5px; 
+    background-color: #fff; 
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+    /* min-width: 260px; */
+    width: 100%;
 }
 
 .friend .delete-btn, .item .delete-btn, .item .collapse-btn {
@@ -93,29 +101,43 @@ button:active {
     padding: 0.6em 0.6em;
 }
 .item .delete-btn {
-    background: #d8d8d8; /* 減號按鈕顏色 */
-    color: #858585;
+    background: #fff; 
+    color: #000;
     padding: 1em 1em;
-    top: -0.5em;
-    right: -0.5em;
+    top: 0.01em;
+    right: 0.01em;
     font-size: 20px;
 }
 .item .collapse-btn {
-    background: #d8d8d8; /* 減號按鈕顏色 */
-    color: #858585;
+    background-color: transparent;
+    color: #000000;
     padding: 1em 1em;
-    top: -0.5em;
-    left: -0.7em;
+    padding-right: 52em;
+    top: 0.01em;
+    left: 0.1em;
     font-size: 20px;
     font-weight: 900;
 }
 
+.item .item-title {
+    font-weight: bold;
+}
+
+.friend-name {
+    background-color: white;
+    color: black;
+}
+
 .friend-name, .item-friend-name {
-    background-color: #e0e0e0;
+    /* background-color: #e0e0e0; */
     border-radius: 50px;
     padding: 10px 20px;
     display: inline-block;
     cursor: pointer;
+}
+
+.item-friend-name {
+    color: rgb(255, 254, 251);
 }
 
 .item-friends {
@@ -182,31 +204,21 @@ button:active {
     font-weight: bolder;
 }
 
-.results-output p {
-    font-size: 18px;
-    margin: 10px 0;
-}
-
-
 #results {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 400px;
+    background-color: #f5f5f5;
+    border-radius: 6px;
     display: inline-block;
-    margin: 1em;
-    padding: 2.5em 2em;
-    /* padding-top: 0em; */
+    width: 80%;
+    border: 2px solid black;
 }
 
-/* 标题样式 */
-#results h3 {
+#results h5 {
     margin-top: 0;
     color: #333;
+    font-weight: 600;
+    font-family: 'Trebuchet MS', sans-serif;
 }
 
-/* 警告信息样式 */
 #results-alert {
     display: block;
     margin-bottom: 10px;
@@ -214,7 +226,6 @@ button:active {
     font-weight: bold;
 }
 
-/* 输出结果容器样式 */
 #results-output {
     display: flex;
     flex-direction: column;
@@ -222,28 +233,136 @@ button:active {
     align-items: center;
 }
 
-/* 结果项样式 */
 .result-output-friend {
-    /* padding: 10px;
-    border-radius: 4px;
-    color: #000;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px; */
     min-width: 10em;
+    color: rgb(255, 254, 251);
+    border: 2px solid black;
 }
 
-.result-output-friend p {
-    margin: 0;
-}
-
-/* 添加一些 hover 效果 */
 .result-output-friend:hover {
     opacity: 0.8;
     cursor: pointer;
 }
 
-h3 {
-    margin-top: 1em !important;
+.line {
+    margin:5px 0;
+    height:2px;
+    background:
+        repeating-linear-gradient(90deg,rgb(30, 30, 30) 0 10px,#0000 0 12px)
+        /*10px red then 2px transparent -> repeat this!*/
 }
+
+.button-28 {
+  appearance: none;
+  background-color: transparent;
+  border: 2px solid #1A1A1A;
+  border-radius: 15px;
+  box-sizing: border-box;
+  color: #3B3B3B;
+  cursor: pointer;
+  display: block;
+  font-family: Roobert,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  font-size: 16px;
+  font-weight: 600;
+  line-height: normal;
+  margin: 0;
+  /* min-height: 60px; */
+  min-width: 0;
+  outline: none;
+  padding: 16px 24px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: 15%;
+  will-change: transform;
+}
+
+.button-28:disabled {
+  pointer-events: none;
+}
+
+.button-28:hover {
+  /* color: #fff; */
+  /* background-color: #1A1A1A; */
+  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+  transform: translateY(-2px);
+}
+
+.button-28:active {
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+.button-50 {
+  appearance: button;
+  background-color: #000;
+  background-image: none;
+  border: 1px solid #000;
+  border-radius: 4px;
+  box-shadow: #fff 4px 4px 0 0,#000 4px 4px 0 1px;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: block;
+  font-family: ITCAvantGardeStd-Bk,Arial,sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  margin: 0 5px 10px 0;
+  overflow: visible;
+  /* padding: 12px 40px; */
+  text-align: center;
+  text-transform: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  /* vertical-align: middle; */
+  white-space: nowrap;
+}
+
+.button-50:focus {
+  text-decoration: none;
+}
+
+.button-50:hover {
+  text-decoration: none;
+}
+
+.button-50:active {
+  box-shadow: rgba(0, 0, 0, .125) 0 3px 5px inset;
+  outline: 0;
+}
+
+.button-50:not([disabled]):active {
+  box-shadow: #fff 2px 2px 0 0, #000 2px 2px 0 1px;
+  transform: translate(2px, 2px);
+}
+
+@media (min-width: 768px) {
+  .button-50 {
+    padding: 12px 50px;
+  }
+}
+
+@media (max-width: 768px) {
+    .body-title {
+      font-size: 2.5em;
+      font-weight: 300;
+    }
+    .button-28 {
+      width: 60%;
+    }
+    .item .collapse-btn {
+      padding-right: 75%;
+    }
+    .button-28:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    .button-28:active {
+      background-color: #7c7c7c;
+    }
+  }

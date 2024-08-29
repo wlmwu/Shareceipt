@@ -12,10 +12,10 @@ class Friend {
         const getRandomIntInRange = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
         const values = [
-            getRandomIntInRange(100, 240),
-            getRandomIntInRange(getRandomIntInRange(50, 70), getRandomIntInRange(140, 240)),
+            getRandomIntInRange(50, 150),
+            getRandomIntInRange(30, 100),
         ];
-        values.push(700 - values[0] - values[1]);
+        values.push(Math.min(220, 350 - values[0] - values[1]));
         values.sort(() => Math.random() - 0.5);
 
         return { r: values[0], g: values[1], b: values[2] };
@@ -119,8 +119,8 @@ class FriendManager {
             if (!friendElement.length) {
                 this.friendListElement.append(`
                     <div class="friend">
-                        <span class="friend-name" data-id="${friend.id}" style="background-color: ${friend.rgbString}">${friend.name}</span>
-                        <button class="delete-btn" data-id="${friend.id}">✖</button>
+                        <span class="friend-name" data-id="${friend.id}" style="border: 2px solid ${friend.rgbString};">${friend.name}</span>
+                        <button class="delete-btn" data-id="${friend.id}"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 `);
             } else {
@@ -157,7 +157,7 @@ class FriendManager {
                     itemFriendsDiv.append(`
                         <div class="item-friend">
                             <input type="checkbox" id="item-${itemId}-friend-${friend.id}" checked>
-                            <label for="item-${itemId}-friend-${friend.id}" class="item-friend-name" style="background-color: ${friend.rgbString}" >
+                            <label for="item-${itemId}-friend-${friend.id}" class="item-friend-name" style="border: 1.5px solid black; border-radius: 6px; background-color:${friend.rgbString};" >
                             </label>
                         </div>
                     `);
@@ -173,7 +173,7 @@ class FriendManager {
 
                 $($(div).find('label')).html( `
                     <div class="text-center align-middle">
-                        <div class="d-block d-sm-inline">${friend.name}</div>
+                        <div class="d-block d-sm-inline">${friend.name}&emsp;</div>
                         <div class="d-inline">
                             <input type="number" value="${percentage}" min="0" max="100" step="0.01" class="percentage-input" ${item.getParticipantChecked(friendId) === false ? "disabled" : ""}> %
                         </div>
@@ -212,25 +212,26 @@ class FriendManager {
             let itemElement = this.itemsListElement.find(`.item[data-id="${item.id}"]`);
             if (!itemElement.length) {
                 this.itemsListElement.append(`
-                    <div class="item m-sm-3 p-sm-2"  data-id="${item.id}">
+                    <div class="item p-sm-2"  data-id="${item.id}">
                         <button class="collapse-btn" data-bs-toggle="collapse" data-bs-target="#item-container-${item.id}" aria-expanded="true" aria-controls="item-container-${item.id}">
-                            ▬
+                            <i style="font-size:24px" class="fa">&#xf107;</i>
                         </button>
-                        <button class="delete-btn">✖</button>
-                        <div class="item-head"></div>
+                        <button class="delete-btn"><i class="fa-solid fa-xmark"></i></button>
+                        <div class="item-head">&emsp;</div>
                         <div class="item-container collapse show" id="item-container-${item.id}">
-                            <label for="item-name-${item.id}">項目 ${index} 名稱:</label>
+                            <label for="item-name-${item.id}" class="item-title">Item #${index} Name</label>
                             <input type="text" class="item-name" id="item-name-${item.id}" value="${item.name}">
-                            <label for="item-amount-${item.id}">金額:</label>
+                            <label for="item-amount-${item.id}" class="item-title">Amount</label>
                             <input type="number" class="item-amount" id="item-amount-${item.id}" min="0" step="0.01" value="${item.amount}" placeholder="(required)">
-                            <button class="distribute-btn" ontouchstart="">Distribute Evenly</button>
+                            <button class="distribute-btn button-50" ontouchstart=""><i class="fa-solid fa-wand-magic-sparkles"></i> Fill</button>
                             <label for="item-friends-${item.id}"></label>
                             <div id="item-friends-${item.id}" class="item-friends"></div>
+                            <div>&emsp;</div>
                         </div>
                     </div>
                 `);
             } else {
-                $($(itemElement).find('label')[0]).html(`項目 ${index} 名稱:`);
+                $($(itemElement).find('label')[0]).html(`Item ${index} Name`);
             }
             index++;
         });
@@ -252,12 +253,16 @@ class FriendManager {
         $('#items-list .item .delete-btn').off('click').on('click', (e) => {
             const itemId = parseInt($(e.target).closest('.item').data('id'));
             this.removeItem(itemId);
+            if (this.items.size == 0) {
+                $('#items-list').hide();
+            }
         });
 
         $('#items-list .item .item-container').off('hide.bs.collapse').on('hide.bs.collapse', (e) => {
             const itemdiv = $(e.target).closest('.item');
             const collapseBtn = itemdiv.find('.collapse-btn');
-            $(collapseBtn).html(`✚`);
+            // $(collapseBtn).html(`✚`);
+            $(collapseBtn).html(`<i style="font-size:24px" class="fa">&#xf106;</i>`);
 
             let head = itemdiv.find('.item-head');
             let name = itemdiv.find('.item-name')[0].value;
@@ -268,9 +273,10 @@ class FriendManager {
         $('#items-list .item .item-container').off('show.bs.collapse').on('show.bs.collapse', (e) => {
             const itemdiv = $(e.target).closest('.item');
             const collapseBtn = itemdiv.find('.collapse-btn');
-            $(collapseBtn).html( `▬` );
+            // $(collapseBtn).html( `▬` );
+            $(collapseBtn).html( `<i style="font-size:24px" class="fa">&#xf107;</i>` );
             let head = itemdiv.find('.item-head');
-            head.html(``);
+            head.html(`&emsp;`);
         });
 
         $('#items-list .item .distribute-btn').off('click').on('click', (e) => {
@@ -362,8 +368,8 @@ class FriendManager {
         this.friends.forEach((friend, fid) => {
             const totalAmountOwed = totalAmount * results.get(fid) / resultTotal;
             resultsOutput.append(`
-                <div class="">
-                    <span class="result-output-friend friend-name" style="background-color:${friend.rgbString}">${friend.name}:&emsp;$${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)}</span>
+                <div>
+                    <span class="result-output-friend friend-name" style="background-color:${friend.rgbString}">${friend.name}&emsp;$${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)}</span>
                 </div>
                 `);
         });
@@ -396,13 +402,14 @@ class FriendManager {
 
         $('#add-item').on('click', () => {
             this.addItem();
+            $('#items-list').show();
         });
     }
 
     editName(id) {
         const friend = this.friends.get(id);
         if (friend) {
-            const newName = prompt('請輸入新的名稱:', friend.name);
+            const newName = prompt('Rename:', friend.name);
             if (newName) {
                 friend.name = newName;
                 this.updateFriendList();
