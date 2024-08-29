@@ -160,7 +160,7 @@ button {
     padding-left: 24px;
 }
 
-.distribute-btn {
+.unit-btn {
     display: block;
     background-color: rgb(120, 120, 120);
     border-radius: 100px;
@@ -168,7 +168,7 @@ button {
     margin-top: 1.5em !important;
 }
 
-.unit-btn {
+/* .unit-btn {
     display: inline-block;
     background-color: darkblue;
     border-radius: 100%;
@@ -176,7 +176,7 @@ button {
     margin-left: 10px;
     min-width: 42px;
     min-height: 42px;
-}
+} */
 
 .percentage-input {
     display: inline;

@@ -26,6 +26,11 @@ class Friend {
     }
 }
 
+const ItemType = Object.freeze({
+    kTypePercent:   0,
+    kTypeShare:  1
+});
+
 class Item {
     static nextId = 1;
     
@@ -34,7 +39,7 @@ class Item {
         this.name = name;
         this.amount = parseFloat(amount);
         this.participants = new Map(); // Map of Friend ID to percentage
-        this.isUnitPercentage = true;
+        this.unitType = ItemType.kTypePercent;
     }
 
     setParticipant(friendId, percentage, checked=true) {
@@ -69,12 +74,12 @@ class Item {
         else return res;
     }
 
-    setUnitType() {
-        this.isUnitPercentage = !this.isUnitPercentage;
+    switchUnitType() {
+        this.unitType = this.unitType == ItemType.kTypePercent ? ItemType.kTypeShare : ItemType.kTypePercent;
     }
 
     getUnitType() {
-        return this.isUnitPercentage;
+        return this.unitType;
     }
 
 }
@@ -175,7 +180,8 @@ class FriendManager {
                     <div class="text-center align-middle">
                         <div class="d-block d-sm-inline">${friend.name}&emsp;</div>
                         <div class="d-inline">
-                            <input type="number" value="${percentage}" min="0" max="100" step="0.01" class="percentage-input" ${item.getParticipantChecked(friendId) === false ? "disabled" : ""}> %
+                            <input type="number" value="${percentage}" min="0" max="100" step="1" class="percentage-input" ${item.getParticipantChecked(friendId) === false ? "disabled" : ""}> 
+                            ${item.getUnitType() == ItemType.kTypePercent ? '%' : 'share(s)'}
                         </div>
                     </div>
                 `);
@@ -223,7 +229,7 @@ class FriendManager {
                             <input type="text" class="item-name" id="item-name-${item.id}" value="${item.name}">
                             <label for="item-amount-${item.id}" class="item-title">Amount</label>
                             <input type="number" class="item-amount" id="item-amount-${item.id}" min="0" step="0.01" value="${item.amount}" placeholder="(required)">
-                            <button class="distribute-btn button-50" ontouchstart=""><i class="fa-solid fa-wand-magic-sparkles"></i> Fill</button>
+                            <button class="button-50 unit-btn" ontouchstart=""><i class="fa-solid fa-repeat"></i> Unit</button>
                             <label for="item-friends-${item.id}"></label>
                             <div id="item-friends-${item.id}" class="item-friends"></div>
                             <div>&emsp;</div>
@@ -338,11 +344,7 @@ class FriendManager {
             Array.from(this.friends, ([key, obj]) => [key, 0])
         );
 
-        $('#results-alert').html('');
-        let index = 0;
-        this.items.forEach((item, iid) => {
-            ++index;
-            if (!item.amount) return;
+        const calculatePercentage = (index, item, id, results) => {
             const totalPercentage = item.getTotalPercentage();
             if (totalPercentage > 100) {
                 $('#results-alert').append(`[Error] Item #${index} exceed a total of 100%.<br>`);
@@ -363,6 +365,54 @@ class FriendManager {
                     results.set(fid, amount);
                 }
             });
+        };
+
+        const calculateShare = (index, item, id, results) => {
+            const totalShare = item.getTotalPercentage();
+            if (totalShare <= 0) {
+                $('#results-alert').append(`[Error] Item #${index} is completely empty.<br>`);
+                return;
+            }
+            item.participants.forEach((_, fid) => {
+                if (item.getParticipantChecked(fid)) {
+                    const share = item.getParticipantPercentage(fid) || 0;
+                    const amount = item.amount * share / totalShare + results.get(fid);
+                    results.set(fid, amount);
+                }
+            });
+
+        }
+
+        $('#results-alert').html('');
+        let index = 0;
+        this.items.forEach((item, iid) => {
+            ++index;
+            if (!item.amount) return;
+            if (item.getUnitType() == ItemType.kTypePercent) {
+                calculatePercentage(index, item, iid, results);
+            } else {
+                calculateShare(index, item, iid, results);
+            }
+        //     const totalPercentage = item.getTotalPercentage();
+        //     if (totalPercentage > 100) {
+        //         $('#results-alert').append(`[Error] Item #${index} exceed a total of 100%.<br>`);
+        //         return;
+        //     }
+        //     const remainPercentage = 100 - item.getTotalPercentage();
+        //     const countNaN = Array.from(item.participants.values())
+        //                     .map(p => p.percentage)
+        //                     .reduce((accumulator, currentValue) => accumulator + (isNaN(currentValue) ? 1 : 0), 0);
+        //     if (remainPercentage && !countNaN) {
+        //         $('#results-alert').append(`[Error] Item #${index} do not sum to 100%.<br>`);
+        //         return;
+        //     }
+        //     item.participants.forEach((_, fid) => {
+        //         if (item.getParticipantChecked(fid)) {
+        //             const percentage = item.getParticipantPercentage(fid) || remainPercentage/countNaN;
+        //             const amount = item.amount * percentage / 100 + results.get(fid);
+        //             results.set(fid, amount);
+        //         }
+        //     });
             
         });
 
@@ -417,7 +467,7 @@ class FriendManager {
     }
 
     switchUnit(itemId) {
-        this.items.get(itemId).setUnitType();
+        this.items.get(itemId).switchUnitType();
         this.updateItemsList();
     }
 
