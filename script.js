@@ -91,12 +91,17 @@ class FriendManager {
         this.friendListElement = $('#friends-list');
         this.itemsListElement = $('#items-list');
         this.initializeFriends();
+        this.initializeItems();
         this.attachEventListeners();
     }
 
     initializeFriends() {
         this.friendListElement.empty();
         this.addFriend('Friend 1');
+    }
+    initializeItems() {
+        this.itemsListElement.empty();
+        this.addItem();
     }
 
     addFriend(name) {
@@ -501,6 +506,14 @@ class FriendManager {
 
         $('#total-amount-additional').off('input').on('input', () => this.calculate());
         $('#subtotal-amount').off('input').on('input', () => this.calculate());
+        $('#detail-amount-container').off('hide.bs.collapse').on('hide.bs.collapse', (e) => {
+            $('.total-amount-container .collapse-btn .fa-angle-down').hide();
+            $('.total-amount-container .collapse-btn .fa-angle-right').show();         
+        });
+        $('#detail-amount-container').off('show.bs.collapse').on('show.bs.collapse', (e) => {
+            $('.total-amount-container .collapse-btn .fa-angle-down').show();
+            $('.total-amount-container .collapse-btn .fa-angle-right').hide();
+        });
     }
 
     editName(id) {

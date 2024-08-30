@@ -23,8 +23,6 @@
         <!-- <h3>朋友設定</h3> -->
         <div id="friends-list">
             <div class="friend">
-                <span class="friend-name" onclick="editName(this)">Friend 1</span>
-                <button class="delete-btn" onclick="removeFriend(this)">✖</button>
             </div>
         </div>
         <button class="button-28" id="add-friend" ontouchstart="">+ Friend</button>
@@ -34,20 +32,27 @@
         <!-- <h3>項目清單</h3> -->
         <div class="line"></div>
 
-        <div id="items-list" style="display: none;"></div>
+        <div id="items-list"></div>
         
         <button class="button-28" id="add-item" ontouchstart="">+ Item</button>
-        <div class="" id="total-amount-container">
-            <div class="mt-4">
-                <label for="subtotal-amount" style="font-weight: bolder;">Subtotal Amount&emsp;</label>
-                <input type="number" id="subtotal-amount" min="0" step="1" placeholder="(optional)">
-            </div>
-            <div class="mt-2">
-                <label for="total-amount-additional" style="font-weight: bolder; font-size: smaller;">Additional Fee&emsp;</label>
-                <input type="number" id="total-amount-additional" min="0" step="0.1" placeholder="0.0"> %
-            </div>
-            <div class="mt-3" style="font-weight: bolder; font-size: larger;">Total Amount&emsp;$
+
+        <div class="item total-amount-container mt-3">
+            <button class="collapse-btn" data-bs-toggle="collapse" data-bs-target="#detail-amount-container" aria-expanded="true" aria-controls="total-amount-container">
+                <i class="fa-solid fa-angle-right" style="font-size: 24px;"></i>
+                <i class="fa-solid fa-angle-down" style="font-size: 24px; display: none;"></i>
+            </button>
+            <div class="" style="font-weight: bolder; font-size: larger; padding-left: 0.5em;">Total Amount&emsp;$
                 <span id="total-amount"></span>
+            </div>
+            <div class="collapse" id="detail-amount-container">
+                <div class="mt-4">
+                    <label for="subtotal-amount" style="font-weight: bolder;">Subtotal Amount&emsp;</label>
+                    <input type="number" id="subtotal-amount" min="0" step="1" placeholder="(optional)">
+                </div>
+                <div class="mt-2">
+                    <label for="total-amount-additional" style="font-weight: bolder; font-size: smaller;">Additional Fee&emsp;</label>
+                    <input type="number" id="total-amount-additional" min="0" step="0.1" placeholder="0.0"> %
+                </div>
             </div>
         </div>
     </div>

@@ -112,7 +112,7 @@ button {
     background-color: transparent;
     color: #000000;
     padding: 1em 1em;
-    padding-right: 52em;
+    padding-right: 93%;
     top: 0.01em;
     left: 0.1em;
     font-size: 20px;
@@ -263,6 +263,19 @@ button {
     font-size: small;
 }
 
+.total-amount-container {
+    /* border: none;
+    border-top: inherit; */
+    width: 45%;
+}
+
+.total-amount-container .collapse-btn {
+    /* padding-right: 13em; */
+    padding-right: 95%;
+    left: 1em;
+    top: 0.2em;
+}
+
 .line {
     margin:5px 0;
     height:2px;
@@ -407,9 +420,7 @@ button {
     .button-28 {
       width: 60%;
     }
-    .item .collapse-btn {
-      padding-right: 75%;
-    }
+
     .button-28:hover {
       transform: none;
       box-shadow: none;
@@ -417,4 +428,16 @@ button {
     .button-28:active {
       background-color: #7c7c7c;
     }
-  }
+    .total-amount-container {
+        width: 80%;
+    }
+}
+
+@media (max-width: 576px) {
+    .total-amount-container {
+        width: 95%;
+    }
+    .total-amount-container .collapse-btn {
+        left: 0;
+    }
+}
