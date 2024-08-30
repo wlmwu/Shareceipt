@@ -471,6 +471,28 @@ class FriendManager {
         this.updateItemsList();
     }
 
+    bindAmountEvents() {
+        $('#total-amount-additional').off('focus').on('focus', (e) => {
+            $(e.target).val('');
+            this.calculate();
+        });
+        $('#subtotal-amount').off('focus').on('focus', (e) => {
+            $(e.target).val('');
+            this.calculate();
+        });
+
+        $('#total-amount-additional').off('input').on('input', () => this.calculate());
+        $('#subtotal-amount').off('input').on('input', () => this.calculate());
+        $('#detail-amount-container').off('hide.bs.collapse').on('hide.bs.collapse', (e) => {
+            $('.total-amount-container .collapse-btn .fa-angle-down').hide();
+            $('.total-amount-container .collapse-btn .fa-angle-right').show();         
+        });
+        $('#detail-amount-container').off('show.bs.collapse').on('show.bs.collapse', (e) => {
+            $('.total-amount-container .collapse-btn .fa-angle-down').show();
+            $('.total-amount-container .collapse-btn .fa-angle-right').hide();
+        });
+    }
+
     attachEventListeners() {
         $('#add-friend').on('click', () => {
             this.addFriend(`Friend ${Friend.nextId}`);
@@ -495,25 +517,7 @@ class FriendManager {
             }
         });
 
-        $('#total-amount-additional').off('focus').on('focus', (e) => {
-            $(e.target).val('');
-            this.calculate();
-        });
-        $('#subtotal-amount').off('focus').on('focus', (e) => {
-            $(e.target).val('');
-            this.calculate();
-        });
-
-        $('#total-amount-additional').off('input').on('input', () => this.calculate());
-        $('#subtotal-amount').off('input').on('input', () => this.calculate());
-        $('#detail-amount-container').off('hide.bs.collapse').on('hide.bs.collapse', (e) => {
-            $('.total-amount-container .collapse-btn .fa-angle-down').hide();
-            $('.total-amount-container .collapse-btn .fa-angle-right').show();         
-        });
-        $('#detail-amount-container').off('show.bs.collapse').on('show.bs.collapse', (e) => {
-            $('.total-amount-container .collapse-btn .fa-angle-down').show();
-            $('.total-amount-container .collapse-btn .fa-angle-right').hide();
-        });
+        this.bindAmountEvents();
     }
 
     editName(id) {

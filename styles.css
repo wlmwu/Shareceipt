@@ -276,6 +276,43 @@ button {
     top: 0.2em;
 }
 
+.mytooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.mytooltip .tooltiptext {
+    visibility: hidden;
+    display: none;
+    width: 84vw;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -42vw;
+}
+
+.mytooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent black transparent;
+}
+
+.mytooltip:hover .tooltiptext {
+    visibility: visible;
+    display: inherit;
+}
+
 .line {
     margin:5px 0;
     height:2px;
@@ -410,6 +447,12 @@ button {
   .button-54 {
     padding: 0.25em 0.75em;
   }
+}
+
+@media (max-width: 991px) {
+    .total-amount-container {
+        width: 60%;
+    }
 }
 
 @media (max-width: 768px) {
