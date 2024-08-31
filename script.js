@@ -74,6 +74,13 @@ class Item {
         else return res;
     }
 
+    getNumNaNParticipant() {
+        return Array.from(this.participants.values())
+                        .map(p => p.percentage)
+                        .reduce((accumulator, currentValue) => accumulator + (isNaN(currentValue) ? 1 : 0), 0);
+        
+    }
+
     switchUnitType() {
         this.unitType = this.unitType == ItemType.kTypePercent ? ItemType.kTypeShare : ItemType.kTypePercent;
     }
@@ -362,11 +369,11 @@ class FriendManager {
                 return;
             }
             const remainPercentage = 100 - item.getTotalPercentage();
-            const countNaN = Array.from(item.participants.values())
-                            .map(p => p.percentage)
-                            .reduce((accumulator, currentValue) => accumulator + (isNaN(currentValue) ? 1 : 0), 0);
-            if (countNaN < item.participants.size && !item.amount) {
-                $('#results-alert').append(`[Error] "Amount" of item #${index} is empty.<br>`);
+            const countNaN = item.getNumNaNParticipant();
+            if (!item.amount) {
+                if (countNaN < item.participants.size) {
+                    $('#results-alert').append(`[Error] "Amount" of item #${index} is empty.<br>`);
+                }
                 return;
             }
             if (remainPercentage && !countNaN) {
@@ -376,6 +383,8 @@ class FriendManager {
             item.participants.forEach((_, fid) => {
                 if (item.getParticipantChecked(fid)) {
                     const percentage = item.getParticipantPercentage(fid) || remainPercentage/countNaN;
+                    const itemfriendInput = $(`label[for="item-${item.id}-friend-${fid}"]`).find('input');
+                    itemfriendInput.attr('placeholder', percentage);
                     const amount = item.amount * percentage / 100 + results.get(fid);
                     results.set(fid, amount);
                 }
@@ -391,6 +400,8 @@ class FriendManager {
             item.participants.forEach((_, fid) => {
                 if (item.getParticipantChecked(fid)) {
                     const share = item.getParticipantPercentage(fid) || 0;
+                    const itemfriendInput = $(`label[for="item-${item.id}-friend-${fid}"]`).find('input');
+                    itemfriendInput.attr('placeholder', 0);
                     const amount = item.amount * share / totalShare + results.get(fid);
                     results.set(fid, amount);
                 }
@@ -443,9 +454,9 @@ class FriendManager {
         let resStr = "";
         this.friends.forEach((friend, fid) => {
             const totalAmountOwed = totalAmount * results.get(fid) / resultTotal;
-            console.log(friend.name, totalAmountOwed);
+            // console.log(friend.name, totalAmountOwed);
             resStr = resStr.concat(`${friend.name}:\t$${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)}\n`);
-            console.log(resStr)
+            // console.log(resStr)
         });
 
         return resStr;
