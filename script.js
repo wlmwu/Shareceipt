@@ -438,10 +438,11 @@ class FriendManager {
         const resultsOutput = $('#results-output');
         resultsOutput.html('');
         this.friends.forEach((friend, fid) => {
-            const totalAmountOwed = totalAmount * results.get(fid) / resultTotal;
+            const owedPercent = results.get(fid) / resultTotal;
+            const totalAmountOwed = totalAmount * owedPercent;
             resultsOutput.append(`
                 <div>
-                    <span class="result-output-friend friend-name" style="background-color:${friend.rgbString}">${friend.name}&emsp;$${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)}</span>
+                    <span class="result-output-friend friend-name" style="background-color:${friend.rgbString}">${friend.name}&emsp;$${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)} <small><small><small style="font-weight:300;">(${isNaN(owedPercent) ? 0 : (owedPercent*100).toFixed(2)}%)</small></small></small></span>
                 </div>
                 `);
         });
@@ -451,11 +452,12 @@ class FriendManager {
         const [totalAmount, results] = this.calculate();
         const resultTotal = Array.from(results.values()).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-        let resStr = "";
+        let resStr = `💵 Total is $${(resultTotal).toFixed(2)} 💵\n\n`;
         this.friends.forEach((friend, fid) => {
-            const totalAmountOwed = totalAmount * results.get(fid) / resultTotal;
+            const owedPercent = results.get(fid) / resultTotal;
+            const totalAmountOwed = totalAmount * owedPercent;
             // console.log(friend.name, totalAmountOwed);
-            resStr = resStr.concat(`${friend.name}:\t$${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)}\n`);
+            resStr = resStr.concat(`👉 ${friend.name}:\n  $${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)}\t(${isNaN(owedPercent) ? 0 : (owedPercent*100).toFixed(2)}%)\n`);
             // console.log(resStr)
         });
 
@@ -519,7 +521,7 @@ class FriendManager {
                 const res = this.getShareResults();
                 const shareData = {
                     title: 'Share the results!',
-                    text: `↓ Each Person's Share ↓\n\n${res}`,
+                    text: `🍣 Each Person's Share 🌮\n\n${res}`,
                     url: document.location.href
                 };
                 await navigator.share(shareData)
