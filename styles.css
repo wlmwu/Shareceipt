@@ -239,9 +239,16 @@ button {
     border: 2px solid black;
 }
 
-.result-output-friend:hover {
+/* .result-output-friend:hover {
     opacity: 0.8;
     cursor: pointer;
+} */
+
+.result-output-percentage {
+    display: none;
+}
+.result-output-friend:hover .result-output-percentage {
+    display: initial;
 }
 
 #results #share-result-btn {
