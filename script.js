@@ -442,7 +442,7 @@ class FriendManager {
             const totalAmountOwed = totalAmount * owedPercent;
             resultsOutput.append(`
                 <div>
-                    <span class="result-output-friend friend-name" style="background-color:${friend.rgbString}">${friend.name}&emsp;$${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)} <small class="result-output-percentage"><small><small style="font-weight:300;">(${isNaN(owedPercent) ? 0 : (owedPercent*100).toFixed(2)}%)</small></small></small></span>
+                    <span class="result-output-friend friend-name" style="background-color:${friend.rgbString}">${friend.name}&emsp;$${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)} <small class="result-output-percentage"><small><small style="font-weight:300;">(${isNaN(owedPercent) ? 0 : (owedPercent*100).toFixed(4)}%)</small></small></small></span>
                 </div>
                 `);
         });
@@ -457,7 +457,7 @@ class FriendManager {
             const owedPercent = results.get(fid) / resultTotal;
             const totalAmountOwed = totalAmount * owedPercent;
             // console.log(friend.name, totalAmountOwed);
-            resStr = resStr.concat(`👉 ${friend.name}:\n  $${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)}\t(${isNaN(owedPercent) ? 0 : (owedPercent*100).toFixed(2)}%)\n`);
+            resStr = resStr.concat(`👉 ${friend.name}:\n  $${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)}\t(${isNaN(owedPercent) ? 0 : (owedPercent*100).toFixed(4)}%)\n`);
             // console.log(resStr)
         });
 
