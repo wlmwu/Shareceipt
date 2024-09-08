@@ -382,7 +382,7 @@ class FriendManager {
             }
             item.participants.forEach((_, fid) => {
                 if (item.getParticipantChecked(fid)) {
-                    const percentage = item.getParticipantPercentage(fid) || remainPercentage/countNaN;
+                    const percentage = (value => isNaN(value) ? remainPercentage/countNaN : value)(item.getParticipantPercentage(fid));
                     const itemfriendInput = $(`label[for="item-${item.id}-friend-${fid}"]`).find('input');
                     itemfriendInput.attr('placeholder', percentage);
                     const amount = item.amount * percentage / 100 + results.get(fid);
