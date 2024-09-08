@@ -42,26 +42,30 @@
                 <i class="fa-solid fa-angle-right" style="font-size: 24px;"></i>
                 <i class="fa-solid fa-angle-down" style="font-size: 24px; display: none;"></i>
             </button>
-            <div class="" style="font-weight: bolder; font-size: larger; padding-left: 0.5em;">Total Amount&emsp;$
+            <div id="total-amount-title" style="font-weight: bolder; font-size: larger; padding-left: 0.5em;">Total Amount&emsp;$
                 <span id="total-amount"></span>
             </div>
             <div class="collapse" id="detail-amount-container">
-                <div class="mytooltip pt-2 pb-1 px-3" id="total-amount-tooltip">
-                    <i class="fa-regular fa-circle-question"></i>
-                    <span class="tooltiptext">
-                        <strong>Total Amount:</strong> Subtotal × (1 + Additional Fee). Subtotal can be auto-calculated.<br><br>
-                        <strong>Usage:</strong><br>
-                        - <strong>Before Checkout:</strong> Enter the additional fee and leave subtotal blank.<br>
-                        - <strong>After Checkout:</strong> Enter the subtotal and leave additional fee blank.
-                      </span>
-                </div>
-                <div class="">
-                    <label for="subtotal-amount" style="font-weight: bolder;">Subtotal Amount&emsp;</label>
-                    <input type="number" id="subtotal-amount" min="0" step="1" placeholder="(optional)">
+                <div class="mt-2" style="font-weight: bolder;">
+                    <!-- <label for="subtotal-amount">Subtotal Amount&emsp;</label> -->
+                    <!-- <input type="number" id="subtotal-amount" min="0" step="1" placeholder="(optional)"> -->
+                    Subtotal Amount&emsp;$<span id="subtotal-amount"></span>
                 </div>
                 <div class="mt-2">
                     <label for="total-amount-additional" style="font-weight: bolder; font-size: smaller;">Additional Fee&emsp;</label>
                     <input type="number" id="total-amount-additional" min="0" step="0.1" placeholder="0.0"> %
+                </div>
+                <div class="mytooltip pt-2 pb-1 px-3" id="total-amount-tooltip">
+                    <i class="fa-regular fa-circle-question"></i>
+                    <span class="tooltiptext">
+                        <strong>Total Amount:</strong> Subtotal × (1 + Additional Fee).<br><br>
+                        <strong>Usage:</strong><br>
+                        - <strong>Before Checkout:</strong> Enter the additional fee and leave total blank.<br>
+                        - <strong>After Checkout:</strong> Enter the total and leave additional fee blank.
+                      </span>
+                </div>
+                <div class="mb-3" style="font-weight: bolder; font-size: large;">Total Amount&emsp;
+                    <input type="number" id="total-amount-input" min="0" step="1" placeholder="">
                 </div>
             </div>
         </div>

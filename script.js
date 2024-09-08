@@ -341,22 +341,16 @@ class FriendManager {
             this.calculate();
         }.bind(this));
 
-        $('#total-amount').off('input').on('input', () => this.calculate());
+        $('#total-amount-input').off('input').on('input', () => this.calculate());
         $('#subtotal-amount').off('input').on('input', () => this.calculate());
     }
 
     calculate() {
         $('#results-alert').html('');
-        if (this.items.size == 0 && ($('#subtotal-amount').val() > 0 || $('#total-amount-additional').val() > 0)) {
+        if (parseFloat($('#subtotal-amount').html()) <= 0 && ($('#total-amount-input').val() > 0 || $('#total-amount-additional').val() > 0)) {
             $('#results-alert').append(`[Error] Adding items to calculate.`);
         }
 
-        let totalAmount = parseFloat($('#total-amount').val());
-        let amountOfItems = Array.from(this.items.values()).map(item => item.amount);
-        totalAmount = totalAmount ? totalAmount : 
-            amountOfItems.reduce((accumulator, currentValue) => {
-            return !isNaN(currentValue) ? accumulator + currentValue : accumulator;
-        }, 0);
         
         let results = new Map(
             Array.from(this.friends, ([key, obj]) => [key, 0])
@@ -421,17 +415,23 @@ class FriendManager {
             
         });
 
-        // console.log(totalAmount, results);
-        this.showResult(totalAmount, results);
-        return [totalAmount, results];
+        const amountOfItems = Array.from(this.items.values()).map(item => item.amount);
+        const originalAmount =  amountOfItems.reduce((accumulator, currentValue) => {
+            return !isNaN(currentValue) ? accumulator + currentValue : accumulator;
+        }, 0);
+        const additionalAmount = parseFloat($('#total-amount-additional').val() || 0) / 100;
+        const totalAmount = (value => isNaN(value) ? (originalAmount * (1 + additionalAmount)) : value)(parseFloat($('#total-amount-input').val()));
+
+        this.showResult(originalAmount, totalAmount, results);
+        return [originalAmount, totalAmount, results];
     }
 
-    showResult(totalAmount, results) {
-        $('#subtotal-amount').attr("placeholder", totalAmount);
-        const originalAmount = parseFloat($('#subtotal-amount').val() ? $('#subtotal-amount').val() : $('#subtotal-amount').attr('placeholder'));
-        const additionalAmount = parseFloat($('#total-amount-additional').val() || 0) / 100;
-        totalAmount = (originalAmount * (1 + additionalAmount));
+    showResult(originalAmount, totalAmount, results) {
         $('#total-amount').html(totalAmount.toFixed(2));
+        $('#total-amount-input').attr('placeholder', totalAmount.toFixed(2));
+
+        $('#subtotal-amount').html(originalAmount.toFixed(2));
+        $('#total-amount-additional').attr('placeholder', originalAmount > 0 ? ((totalAmount/originalAmount - 1) * 100).toFixed(1) : '0.0');
 
         const resultTotal = Array.from(results.values()).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
@@ -448,8 +448,8 @@ class FriendManager {
         });
     }
 
-    getShareResults () {
-        const [totalAmount, results] = this.calculate();
+    getShareResults() {
+        const [_, totalAmount, results] = this.calculate();
         const resultTotal = Array.from(results.values()).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
         let resStr = `💵 Total is $${(resultTotal).toFixed(2)} 💵\n\n`;
@@ -498,11 +498,19 @@ class FriendManager {
         $('#subtotal-amount').off('input').on('input', () => this.calculate());
         $('#detail-amount-container').off('hide.bs.collapse').on('hide.bs.collapse', (e) => {
             $('.total-amount-container .collapse-btn .fa-angle-down').hide();
-            $('.total-amount-container .collapse-btn .fa-angle-right').show();         
+            $('.total-amount-container .collapse-btn .fa-angle-right').show();   
+            $('#total-amount-title').css({
+                'color': '',
+                'user-select': ''
+            });      
         });
         $('#detail-amount-container').off('show.bs.collapse').on('show.bs.collapse', (e) => {
             $('.total-amount-container .collapse-btn .fa-angle-down').show();
             $('.total-amount-container .collapse-btn .fa-angle-right').hide();
+            $('#total-amount-title').css({
+                'color': 'transparent',
+                'user-select': 'none'
+            });
         });
     }
 
