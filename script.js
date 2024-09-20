@@ -588,23 +588,23 @@ class FriendManager {
         const GOOGLE_API_KEY = localStorage.getItem('apiKey');
 
         // const promptMsg = 'The image contains a receipt. Please carefully analyze the details and list each valid item along with its amount. Ensure that the item names are exactly as they appear on the receipt, and be cautious to distinguish actual items from any misleading information. Also, include the total amount. Return the results in JSON format as follows: {"items": [{"name": "item name", "amount": 00.00}, ...], "total": 00.00}.' 
-        const promptMsg = `The image contains a receipt. Please carefully analyze the details and list each valid item along with its amount.\n
-Here are some guidelines for identifying items:
-1. The receipt may contain rows and information that are not items or the total amount; be careful not to confuse them.
-2. If a row represents an item, the name will be on the left and the amount on the right, and both will be aligned on the same line. Be careful not to mistake the total amount for an item.
-3. If a row has a number on the right followed by "TX" (e.g., 10TX means that amount is 10), it usually indicates that this row is an item.
-4. The total amount is typically found on the last line of the receipt, and any information following it will not be an item.
-5. You can try to understand the content of the receipt to identify which rows might be items, but when outputting, make sure the name matches exactly as it appears on the receipt.
-Finally, ensure that the results are returned in a valid JSON format:
+        const promptMsg = `The image contains a receipt. Please carefully analyze the details and list each valid item along with its amount. 
+        Here are some guidelines for identifying items: 
+        1. The receipt may contain rows and information that are not items or the total amount; be careful not to confuse them. 
+        2. If a row represents an item, the name will be on the left and the amount on the right, and both will be aligned on the same line. Be careful not to mistake the total amount for an item. 
+        3. If a row has a number on the right followed by "TX" (e.g., 10TX means that the amount is 10), it usually indicates that this row is an item. 
+        4. The total amount is typically found on the last line of the receipt, and any information following it will not be an item. 
+        5. You can try to understand the content of the receipt to identify which rows might be items, but when outputting, ensure the name matches exactly as it appears on the receipt. 
+        6. If all item amounts are integers (i.e., no decimal points), then the amounts on the receipt (including the total amount) will also be integers only. 
+        Finally, ensure that the results are returned in a valid JSON format: 
+        {
+            "items": [
+                {"name": "item name", "amount": 00.00},
+                ...
+            ],
+            "total": 00.00
+        }`;
 
-{
-    "items": [
-        {"name": "item name", "amount": 00.00},
-        ...
-    ],
-    "total": 00.00
-}
-`;
 
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GOOGLE_API_KEY}`;
        
