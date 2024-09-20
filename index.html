@@ -33,6 +33,18 @@
         <!-- <h3>項目清單</h3> -->
         <div class="line"></div>
 
+        <div class="upload-container my-3">
+            <button class="button-64" id="receipt-upload-btn" role="button">
+                <span class="text">
+                    <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                    <i class="fa-solid fa-spinner fa-spin" style="display: none;"></i> 
+                    &nbsp;Receipt
+                </span>
+            </button>
+            <input type="file" id="receipt-upload-input" style="display: none;" accept="image/*">
+            <button id="update-api-key-btn"><i class="fa-solid fa-key"></i></button>
+        </div>
+
         <div id="items-list"></div>
         
         <button class="button-28" id="add-item" ontouchstart="">+ Item</button>

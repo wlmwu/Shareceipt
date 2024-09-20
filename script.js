@@ -539,6 +539,27 @@ class FriendManager {
         });
 
         this.bindAmountEvents();
+
+        $('#receipt-upload-btn').on('click', () => {
+            const key = localStorage.getItem('apiKey')
+            if (key === null || key === '') {
+                if (!this.setGeminiKey()) {
+                    window.alert('Provide API key to use this feature.')
+                    return;
+                }
+            }
+            $('#receipt-upload-input').click();
+        });
+        $('#receipt-upload-input').on('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                this.analyzeReceipt(file);
+            }
+            $(event.target).val(null);
+        });
+        $('#update-api-key-btn').on('click', () => {
+            this.setGeminiKey();
+        });
     }
 
     editName(id) {
@@ -552,6 +573,121 @@ class FriendManager {
         }
         // console.log(friend);
     }
+    
+    setGeminiKey() {
+        const userInput = prompt("Please type in your Gemini API key", localStorage.getItem('apiKey') || '');
+        if (userInput) {
+            localStorage.setItem('apiKey', userInput);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    analyzeReceipt(file) {
+        const GOOGLE_API_KEY = localStorage.getItem('apiKey');
+
+        // const promptMsg = 'The image contains a receipt. Please carefully analyze the details and list each valid item along with its amount. Ensure that the item names are exactly as they appear on the receipt, and be cautious to distinguish actual items from any misleading information. Also, include the total amount. Return the results in JSON format as follows: {"items": [{"name": "item name", "amount": 00.00}, ...], "total": 00.00}.' 
+        const promptMsg = `The image contains a receipt. Please carefully analyze the details and list each valid item along with its amount.\n
+Here are some guidelines for identifying items:
+1. The receipt may contain rows and information that are not items or the total amount; be careful not to confuse them.
+2. If a row represents an item, the name will be on the left and the amount on the right, and both will be aligned on the same line. Be careful not to mistake the total amount for an item.
+3. If a row has a number on the right followed by "TX" (e.g., 10TX means that amount is 10), it usually indicates that this row is an item.
+4. The total amount is typically found on the last line of the receipt, and any information following it will not be an item.
+5. You can try to understand the content of the receipt to identify which rows might be items, but when outputting, make sure the name matches exactly as it appears on the receipt.
+Finally, ensure that the results are returned in a valid JSON format:
+
+{
+    "items": [
+        {"name": "item name", "amount": 00.00},
+        ...
+    ],
+    "total": 00.00
+}
+`;
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GOOGLE_API_KEY}`;
+       
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            console.log('processing img...')
+            const base64Data = e.target.result.split(',')[1];
+            const requestData = {
+                contents: [{
+                    parts: [
+                        { text: promptMsg },
+                        { inline_data: { mime_type: file.type, data: base64Data } }
+                    ]
+                }]
+            };
+
+            $('#receipt-upload-btn .fa-arrow-up-from-bracket').hide(); 
+            $('#receipt-upload-btn .fa-spinner').show();
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(requestData),
+                success: (response) => {
+                    let data;
+                    const textContent = response.candidates[0].content.parts[0].text;
+                    const regex = /```json\s*([\s\S]*?)\s*```/;
+                    const jsonMatch = textContent.match(regex);
+                    if (jsonMatch && jsonMatch[1]) {
+                        try {
+                            const jsonData = JSON.parse(jsonMatch[1]); 
+                            data = {
+                                items: jsonData.items,
+                                total: jsonData.total
+                            };
+                        } catch (e) {
+                            console.error('JSON parsing error:', e);
+                            window.alert("[Error] There was an error processing the model's reply. Please try again.");
+                            return;
+                        }
+                    }
+                    console.log('Output:\n', data);
+                    if (data) {
+                        try {
+                            $('#total-amount-input').val(parseFloat(data.total).toFixed(2));
+                            this.items = new Map();
+                            $.each(data.items, (i, item) => {
+                                this.addItem(item.name, item.amount)
+                            });
+                            this.items.forEach((_, iid) => {
+                                $(`#item-container-${iid}`).closest('.item').find('.collapse-btn').click()
+                            });
+                        } catch (e) {
+                            console.error('JSON parsing error:', e);
+                            window.alert("[Error] There was an error processing the model's reply. Please try again.");
+                        }
+                    } else {
+                        window.alert('[Error] No items on the receipt were found. Please try again.');
+                    }
+                },
+                error: (xhr, status, error) => {
+                    let errorMessage = 'An unknown error occurred.';
+                    if (xhr.responseJSON && xhr.responseJSON.error) {
+                        errorMessage = xhr.responseJSON.error.message;
+                        console.error('Error message:', errorMessage);
+                    }
+                    window.alert(`[Error] ${errorMessage}`);
+                    if (errorMessage.toLowerCase().includes('key') && errorMessage.toLowerCase().includes('valid')) {
+                        localStorage.setItem('apiKey', '');
+                    }
+                },
+                complete: () => {
+                    $('#receipt-upload-btn .fa-spinner').hide();
+                    $('#receipt-upload-btn .fa-arrow-up-from-bracket').show();
+                    $('#receipt-upload-input').val();
+                }
+            });
+            
+        }
+        reader.readAsDataURL(file);
+    };
+    
 }
 
 
