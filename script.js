@@ -585,7 +585,6 @@ class FriendManager {
     analyzeReceipt(file) {
         const GOOGLE_API_KEY = localStorage.getItem('apiKey');
 
-        // const promptMsg = 'The image contains a receipt. Please carefully analyze the details and list each valid item along with its amount. Ensure that the item names are exactly as they appear on the receipt, and be cautious to distinguish actual items from any misleading information. Also, include the total amount. Return the results in JSON format as follows: {"items": [{"name": "item name", "amount": 00.00}, ...], "total": 00.00}.' 
         const promptMsg = `The image contains a receipt. Please carefully analyze the details and list each valid item along with its amount. 
         Here are some guidelines for identifying items: 
         1. The receipt may contain rows and information that are not items or the total amount; be careful not to confuse them. 
@@ -604,7 +603,7 @@ class FriendManager {
         }`;
 
 
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GOOGLE_API_KEY}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GOOGLE_API_KEY}`;
        
         const reader = new FileReader();
         reader.onload = (e) => {
