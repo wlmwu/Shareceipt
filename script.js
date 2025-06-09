@@ -452,13 +452,11 @@ class FriendManager {
         const [_, totalAmount, results] = this.calculate();
         const resultTotal = Array.from(results.values()).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-        let resStr = `💵 Total is $${(resultTotal).toFixed(2)} 💵\n\n`;
+        let resStr = `💵 Total is $${(totalAmount).toFixed(2)} 💵\n\n`;
         this.friends.forEach((friend, fid) => {
             const owedPercent = results.get(fid) / resultTotal;
             const totalAmountOwed = totalAmount * owedPercent;
-            // console.log(friend.name, totalAmountOwed);
             resStr = resStr.concat(`👉 ${friend.name}:\n  $${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)}\t(${isNaN(owedPercent) ? 0 : (owedPercent*100).toFixed(4)}%)\n`);
-            // console.log(resStr)
         });
 
         return resStr;
