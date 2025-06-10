@@ -243,7 +243,7 @@ class FriendManager {
             if (!itemElement.length) {
                 this.itemsListElement.append(`
                     <div class="item p-sm-2"  data-id="${item.id}">
-                        <button class="collapse-btn" data-bs-toggle="collapse" data-bs-target="#item-container-${item.id}" aria-expanded="true" aria-controls="item-container-${item.id}">
+                        <button id="item-collapse-btn-${item.id}" class="collapse-btn" data-bs-toggle="collapse" data-bs-target="#item-container-${item.id}" aria-expanded="true" aria-controls="item-container-${item.id}">
                             <i style="font-size:24px" class="fa">&#xf107;</i>
                         </button>
                         <button class="delete-btn"><i class="fa-solid fa-xmark"></i></button>
@@ -294,10 +294,20 @@ class FriendManager {
             // $(collapseBtn).html(`✚`);
             $(collapseBtn).html(`<i style="font-size:24px" class="fa">&#xf106;</i>`);
 
-            let head = itemdiv.find('.item-head');
-            let name = itemdiv.find('.item-name')[0].value;
-            let amount = itemdiv.find('.item-amount')[0].value;
-            head.html(`${name ? name : ""}&emsp;&emsp; ${amount ? "$ "+amount : ""}`)
+            const $head = itemdiv.find('.item-head');
+            const $name = itemdiv.find('.item-name')[0].value;
+            const $amount = itemdiv.find('.item-amount')[0].value;
+            const itemID = parseInt($(e.target).closest('.item').data('id'));
+            const titleDiv = `
+                <div class="container-flex-space" style="padding: 0 20%">
+                    <span>${$name ? $name : "&emsp;"}</span>
+                    <span>${$amount ? `$ ${$amount}` : "&emsp;"}</span>
+                </div>
+                `;
+            $head.html(titleDiv);
+            $head.on('click', function(e) {
+                $(`#item-collapse-btn-${itemID}`).trigger('click');                
+            })
         });
         
         $('#items-list .item .item-container').off('show.bs.collapse').on('show.bs.collapse', (e) => {
