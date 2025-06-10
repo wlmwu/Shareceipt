@@ -1,3 +1,15 @@
+function isTouchDevice() {
+    if ('ontouchstart' in window) {
+        return true;
+    } else if (window.navigator.maxTouchPoints && window.navigator.maxTouchPoints > 0) {
+        return true;
+    } else if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+        return true;
+    }
+
+    return false;
+}
+
 class Friend {
     static nextId = 1;
 
@@ -104,7 +116,7 @@ class FriendManager {
 
     initializeFriends() {
         this.friendListElement.empty();
-        this.addFriend('Friend 1');
+        this.addFriend('Friend1');
     }
     initializeItems() {
         this.itemsListElement.empty();
@@ -351,9 +363,14 @@ class FriendManager {
             $('#results-alert').append(`[Error] Adding items to calculate.`);
         }
 
-        
         let results = new Map(
-            Array.from(this.friends, ([key, obj]) => [key, 0])
+            Array.from(this.friends, ([key, obj]) => [
+                key,
+                {
+                    total: 0,
+                    items: new Map(),    //  item.id, percentage of the friend in the item
+                }
+            ])
         );
 
         const calculatePercentage = (index, item, id, results) => {
@@ -379,8 +396,10 @@ class FriendManager {
                     const percentage = (value => isNaN(value) ? remainPercentage/countNaN : value)(item.getParticipantPercentage(fid));
                     const itemfriendInput = $(`label[for="item-${item.id}-friend-${fid}"]`).find('input');
                     itemfriendInput.attr('placeholder', percentage);
-                    const amount = item.amount * percentage / 100 + results.get(fid);
-                    results.set(fid, amount);
+
+                    const friendResult = results.get(fid);
+                    friendResult.total += item.amount * percentage / 100;
+                    friendResult.items.set(item.id, percentage / 100);
                 }
             });
         };
@@ -396,8 +415,11 @@ class FriendManager {
                     const share = item.getParticipantPercentage(fid) || 0;
                     const itemfriendInput = $(`label[for="item-${item.id}-friend-${fid}"]`).find('input');
                     itemfriendInput.attr('placeholder', 0);
-                    const amount = item.amount * share / totalShare + results.get(fid);
-                    results.set(fid, amount);
+
+                    const percentage = share / totalShare;
+                    const friendResult = results.get(fid);
+                    friendResult.total += item.amount * percentage;
+                    friendResult.items.set(item.id, percentage);
                 }
             });
 
@@ -433,28 +455,116 @@ class FriendManager {
         $('#subtotal-amount').html(originalAmount.toFixed(2));
         $('#total-amount-additional').attr('placeholder', originalAmount > 0 ? ((totalAmount/originalAmount - 1) * 100).toFixed(1) : '0.0');
 
-        const resultTotal = Array.from(results.values()).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        const resultTotal = Array.from(results.values()).reduce((accumulator, currentValue) => accumulator + currentValue.total, 0);
 
         const resultsOutput = $('#results-output');
         resultsOutput.html('');
         this.friends.forEach((friend, fid) => {
-            const owedPercent = results.get(fid) / resultTotal;
+            const owedPercent = results.get(fid).total / resultTotal;
             const totalAmountOwed = totalAmount * owedPercent;
             resultsOutput.append(`
                 <div>
-                    <span class="result-output-friend friend-name" style="background-color:${friend.rgbString}">${friend.name}&emsp;$${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)} <small class="result-output-percentage"><small><small style="font-weight:300;">(${isNaN(owedPercent) ? 0 : (owedPercent*100).toFixed(4)}%)</small></small></small></span>
+                    <div class="result-output-friend-container" id="result-output-friend-${fid}-container">
+                        <span class="result-output-friend friend-name" style="background-color:${friend.rgbString}">
+                            ${friend.name}&emsp;$${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)} 
+                            <small class="result-output-percentage"><small><small style="font-weight:300;">(${isNaN(owedPercent) ? 0 : (owedPercent*100).toFixed(4)}%)</small></small></small>
+                            ${
+                                (isNaN(totalAmountOwed) || totalAmountOwed == 0) ? 
+                                    '' :
+                                    `<span class="result-output-detail" style="background-color:${friend.rgbString}">
+                                        <div class="container-flex-space result-output-detail-topic">
+                                            <h5 style="color:rgb(255, 254, 251); display: inline;"><small>${friend.name}'s Item Summary</small></h5> 
+                                            <i class="fa-regular fa-clipboard" id="copy-btn-${fid}"></i>
+                                        </div>
+                                        ${
+                                            Array.from(results.get(fid).items.entries()).map(([itemID, percentage]) => {
+                                                const item = this.items.get(itemID);
+                                                if (item) {
+                                                    const itemAmount = (item.amount * percentage) * (totalAmount/originalAmount);
+                                                    return `<div class="result-output-friend-item container-flex-space">
+                                                            <span>${item.name}</span>
+                                                            <span>$${itemAmount.toFixed(2)}</span>
+                                                        </div>`
+                                                }
+                                                return '';
+                                            }).join('')
+                                        }
+                                    </span>`
+                            }
+                        </span>
+                    </div>
                 </div>
-                `);
+            `);
+
+            $(`#result-output-friend-${fid}-container`).on('click', function(e) {
+                const $detail = $(this).find('.result-output-detail');
+                $detail.toggle();
+                const $percentage = $(this).find('.result-output-percentage');
+                $percentage.toggle();
+            });
+            $(`#result-output-friend-${fid}-container`).hover(
+                function(e) { /* mouseenter */ 
+                    if (!isTouchDevice()) {
+                        const $detail = $(this).find('.result-output-detail');
+                        if ($detail.is(':hidden')) {
+                            $detail.toggle();
+                        }
+                        const $percentage = $(this).find('.result-output-percentage');
+                        if ($percentage.is(':hidden')) {
+                            $percentage.toggle();
+                        }
+                    }
+                },
+                function(e) { /* mouseleave */
+                    const $detail = $(this).find('.result-output-detail');
+                    if (!$detail.is(':hidden')) {
+                        $detail.toggle();
+                    }
+                    const $percentage = $(this).find('.result-output-percentage');
+                    if (!$percentage.is(':hidden')) {
+                        $percentage.toggle();
+                    }
+                }
+            );
+            $(`#copy-btn-${fid}`).on('click', (e) => {
+                e.stopPropagation();
+                const $copyBtn = $(`#copy-btn-${fid}`);
+                // const $detail = $copyBtn.closest('.result-output-friend');
+                // const textCopy = $detail.text().trim();
+                const textCopy = `${friend.name}'s Item Summary:\n\n${
+                    Array.from(results.get(fid).items.entries()).map(([itemID, percentage]) => {
+                        const item = this.items.get(itemID);
+                        if (item) {
+                            const itemAmount = (item.amount * percentage) * (totalAmount/originalAmount);
+                            return `📦 ${item.name} $${itemAmount.toFixed(2)}\n`
+                        }
+                        return '';
+                    }).join('')
+                }\n🧮 Total: ${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)} (${isNaN(owedPercent) ? 0 : (owedPercent*100).toFixed(4)}%)`;
+
+                navigator.clipboard.writeText(textCopy)
+                    .then(() => {
+                        console.log('Text copied to clipboard:', textCopy);
+                        $copyBtn.removeClass('fa-regular fa-clipboard').addClass('fa-solid fa-check');
+                        setTimeout(() => {
+                            $copyBtn.removeClass('fa-solid fa-check').addClass('fa-regular fa-clipboard');
+                        }, 1500);
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy text: ', err);
+                        alert('Failed to copy. Please copy manually.');
+                    });
+            });
         });
     }
 
     getShareResults() {
         const [_, totalAmount, results] = this.calculate();
-        const resultTotal = Array.from(results.values()).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        const resultTotal = Array.from(results.values()).reduce((accumulator, currentValue) => accumulator + currentValue.total, 0);
 
         let resStr = `💵 Total is $${(totalAmount).toFixed(2)} 💵\n\n`;
         this.friends.forEach((friend, fid) => {
-            const owedPercent = results.get(fid) / resultTotal;
+            const owedPercent = results.get(fid).total / resultTotal;
             const totalAmountOwed = totalAmount * owedPercent;
             resStr = resStr.concat(`👉 ${friend.name}:\n  $${isNaN(totalAmountOwed) ? 0 : totalAmountOwed.toFixed(2)}\t(${isNaN(owedPercent) ? 0 : (owedPercent*100).toFixed(4)}%)\n`);
         });
@@ -514,7 +624,7 @@ class FriendManager {
 
     attachEventListeners() {
         $('#add-friend').on('click', () => {
-            this.addFriend(`Friend ${Friend.nextId}`);
+            this.addFriend(`Friend${Friend.nextId}`);
         });
 
         $('#add-item').on('click', () => {

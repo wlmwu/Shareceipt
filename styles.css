@@ -247,9 +247,6 @@ button {
 .result-output-percentage {
     display: none;
 }
-.result-output-friend:hover .result-output-percentage {
-    display: initial;
-}
 
 #results #share-result-btn {
     color: #333;
@@ -319,6 +316,70 @@ button {
 .mytooltip:hover .tooltiptext {
     visibility: visible;
     display: inherit;
+}
+
+.result-output-friend-container {
+    position: relative;
+}
+
+.result-output-friend-container .result-output-detail {
+    /* visibility: hidden; */
+    display: none;
+    width: 84vw;
+    color: rgb(255, 254, 251);
+    text-align: center;
+    border-radius: 6px;
+    padding: 1em 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 110%;
+    left: 50%;
+    margin-left: -42vw;
+    border: 2px solid black;
+}
+
+.result-output-friend-container .result-output-friend-item {
+    padding: 0 12%;
+    /* padding: 0 2em; */
+}
+
+.container-flex-space {
+    display: flex; 
+    justify-content: space-between;
+}
+
+.result-output-detail .result-output-detail-topic {
+    padding: 0 15%;
+}
+
+.result-output-detail .result-output-detail-topic .fa-clipboard, .result-output-detail .result-output-detail-topic .fa-check {
+    margin-top: 0.26em;
+}
+
+@media (min-width: 768px) {
+    .result-output-detail .result-output-detail-topic {
+        padding: 0 30%;
+    }
+}
+
+@media (min-width: 991px) {
+    .result-output-friend-container .result-output-detail {
+        width: 36vw;
+        margin-left: -18vw;
+    }
+    .result-output-detail .result-output-detail-topic {
+        padding: 0 20%;
+    }
+}
+
+@media (min-width: 1366px) {
+    .result-output-friend-container .result-output-detail {
+        width: 32vw;
+        margin-left: -16vw;
+    }
+    .result-output-detail .result-output-detail-topic {
+        padding: 0 31.5%;
+    }
 }
 
 .line {
