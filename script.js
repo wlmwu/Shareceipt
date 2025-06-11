@@ -329,6 +329,13 @@ class FriendManager {
             this.switchUnit(itemId);
         });
 
+        $('#items-list .item .item-container .item-name').off('input').on('input', (e) => {
+            const itemID = parseInt(e.target.id.split('-')[2]);
+            const itemVal = $(e.target).val();
+            this.items.get(itemID).name = itemVal;
+            this.calculate();
+        });
+
         $('#items-list .item-friends input[type="number"]').off('focus').on('focus', (e) => {
             const itemId = parseInt($(e.target.closest('label')).attr('for').split('-')[1]);
             const friendId = parseInt($(e.target.closest('label')).attr('for').split('-')[3]);
@@ -490,9 +497,10 @@ class FriendManager {
                                             Array.from(results.get(fid).items.entries()).map(([itemID, percentage]) => {
                                                 const item = this.items.get(itemID);
                                                 if (item) {
+                                                    const itemName = (item.name === null || item.name === undefined || item.name.trim() === '') ? '&lt;Unnamed&gt;' : item.name;
                                                     const itemAmount = (item.amount * percentage) * (totalAmount/originalAmount);
                                                     return `<div class="result-output-friend-item container-flex-space">
-                                                            <span>${item.name}</span>
+                                                            <span>${itemName}</span>
                                                             <span>$${itemAmount.toFixed(2)}</span>
                                                         </div>`
                                                 }
@@ -545,8 +553,9 @@ class FriendManager {
                     Array.from(results.get(fid).items.entries()).map(([itemID, percentage]) => {
                         const item = this.items.get(itemID);
                         if (item) {
+                            const itemName = (item.name === null || item.name === undefined || item.name.trim() === '') ? '<Unnamed>' : item.name;
                             const itemAmount = (item.amount * percentage) * (totalAmount/originalAmount);
-                            return `📦 ${item.name} $${itemAmount.toFixed(2)}\n`
+                            return `📦 ${itemName} $${itemAmount.toFixed(2)}\n`
                         }
                         return '';
                     }).join('')
@@ -684,12 +693,13 @@ class FriendManager {
         const friend = this.friends.get(id);
         if (friend) {
             const newName = prompt('Rename:', friend.name);
-            if (newName) {
-                friend.name = newName;
+            if (newName !== null && newName.trim() !== '') {
+                friend.name = newName.trim(); 
                 this.updateFriendList();
+            } else if (newName.trim() === '') {
+                alert('Friend name cannot be empty or contain only spaces.');
             }
         }
-        // console.log(friend);
     }
     
     setGeminiKey() {
